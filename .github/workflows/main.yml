@@ -14,17 +14,6 @@ jobs:
       
       - name: generate test generate coverage
         run: go test ./... -coverprofile=./cover.out
-      
-      - name: make coverage badge
-        uses: action-badges/core@0.2.2
-        if: contains(github.ref, 'main')
-        with:
-          label: coverage
-          message: ${{ steps.coverage.outputs.badge-text }}
-          message-color: ${{ steps.coverage.outputs.badge-color }}
-          file-name: coverage.svg
-          badge-branch: badges ## orphan branch where badge will be committed
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: check test coverage
         id: coverage ## this step must have id
@@ -35,6 +24,16 @@ jobs:
           threshold-file: 70
           threshold-package: 70
           threshold-total: 60
-        
-        
+          
+      #https://github.com/vladopajic/go-test-coverage/blob/main/docs/badge.md
+      - name: make coverage badge
+        uses: action-badges/core@0.2.2
+        if: contains(github.ref, 'main')
+        with:
+          label: coverage
+          message: ${{ steps.coverage.outputs.badge-text }}
+          message-color: ${{ steps.coverage.outputs.badge-color }}
+          file-name: coverage.svg
+          badge-branch: badges ## orphan branch where badge will be committed
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
       
