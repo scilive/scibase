@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRSA(t *testing.T) {
+func TestBcrypt(t *testing.T) {
 	crtypedPassword := encrypts.Bcrypt("123456", 10)
 	assert.True(t, encrypts.BcryptCompare("123456", crtypedPassword))
 }

@@ -12,7 +12,7 @@ import (
 
 type RSA struct{}
 
-func (RSA) OAEPEncrypt(secretMessage string, key rsa.PublicKey) (string, error) {
+func (RSA) OAEPEncrypt(secretMessage []byte, key rsa.PublicKey) (string, error) {
 	label := []byte("OAEP Encrypted")
 	rng := rand.Reader
 	ciphertext, err := rsa.EncryptOAEP(sha256.New(), rng, &key, []byte(secretMessage), label)
@@ -22,15 +22,15 @@ func (RSA) OAEPEncrypt(secretMessage string, key rsa.PublicKey) (string, error) 
 	return base64.StdEncoding.EncodeToString(ciphertext), nil
 }
 
-func (RSA) OAEPDecrypt(cipherText string, privKey rsa.PrivateKey) (string, error) {
+func (RSA) OAEPDecrypt(cipherText string, privKey rsa.PrivateKey) ([]byte, error) {
 	ct, _ := base64.StdEncoding.DecodeString(cipherText)
 	label := []byte("OAEP Encrypted")
 	rng := rand.Reader
 	plaintext, err := rsa.DecryptOAEP(sha256.New(), rng, &privKey, ct, label)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return string(plaintext), nil
+	return plaintext, nil
 }
 
 func (RSA) GenPem(bits int) (string, string, error) {
