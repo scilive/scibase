@@ -25,12 +25,12 @@ type MinIOClient struct {
 	Provider S3Provider
 }
 
-func NewMinIO(client *minio.Client, bucket string, provider S3Provider) (*MinIOClient, error) {
+func NewMinIO(client *minio.Client, bucket string, provider S3Provider) *MinIOClient {
 	return &MinIOClient{
 		Client:   client,
 		Bucket:   bucket,
 		Provider: provider,
-	}, nil
+	}
 }
 
 func (s *MinIOClient) Put(key string, file io.Reader, fileSize int64, contentType string) error {
