@@ -2,6 +2,7 @@
 sci base project for all golang projects
 
 ![coverage](https://raw.githubusercontent.com/scilive/scibase/badges/.badges/main/coverage.svg)
+https://github.com/scilive/scibase/blob/badges/.badges/main/coverage.svg
 
 
 ```shell
