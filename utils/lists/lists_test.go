@@ -13,16 +13,6 @@ type user struct {
 	Name string
 }
 
-func TestLists(t *testing.T) {
-	us := []user{
-		{Id: 1, Name: "a"},
-		{Id: 2, Name: "b"},
-		{Id: 3, Name: "c"},
-	}
-	col := lists.Column(us, func(v user) int { return v.Id })
-	assert.Equal(t, col, []int{1, 2, 3})
-}
-
 func TestSort(t *testing.T) {
 	us := []user{
 		{Id: 1, Name: "a"},

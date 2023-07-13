@@ -34,15 +34,6 @@ func Concat[T any](arrs ...[]T) []T {
 	return res
 }
 
-// Column returns a new slice containing the results of applying fn to each
-func Column[T any, V any](arr []T, fn func(v T) V) []V {
-	res := make([]V, len(arr))
-	for i, v := range arr {
-		res[i] = fn(v)
-	}
-	return res
-}
-
 // Map returns a new slice containing the results of applying fn to each
 func Map[T any, V any](arr []T, fn func(v T, i int) V) []V {
 	res := make([]V, len(arr))
