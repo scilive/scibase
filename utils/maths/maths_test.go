@@ -8,13 +8,13 @@ import (
 )
 
 func TestMax(t *testing.T) {
-	values := []int{1, 2, 3, 4, 5}
+	values := []int{1, 2, 3, 4, 4, 5}
 	r := maths.Max(values...)
 	assert.Equal(t, r, 5)
 }
 
 func TestMin(t *testing.T) {
-	values := []int{1, 2, 3, 4, 5}
+	values := []int{1, 2, 3, 8, 4, 5}
 	r := maths.Min(values...)
 	assert.Equal(t, r, 1)
 }
