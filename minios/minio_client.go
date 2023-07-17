@@ -12,37 +12,36 @@ import (
 
 type MinIOClient struct {
 	*minio.Client
-	Bucket     string
-	PutThreads uint
+	Bucket string
 }
 
 func NewMinIO(client *minio.Client, bucket string) *MinIOClient {
 	return &MinIOClient{
-		Client:     client,
-		Bucket:     bucket,
-		PutThreads: 10,
+		Client: client,
+		Bucket: bucket,
 	}
 }
 
-func (s *MinIOClient) Put(key string, file io.Reader, fileSize int64, contentType, filename string) error {
+func (s *MinIOClient) Put(key string, file io.Reader, fileSize int64, contentType, filename string, numThreads uint) error {
 	key = strings.TrimLeft(key, "/")
-	opts := minio.PutObjectOptions{
-		ContentType: contentType,
+	var opts minio.PutObjectOptions
+	if contentType != "" {
+		opts.ContentType = contentType
 	}
 	if filename != "" {
 		opts.ContentDisposition = fmt.Sprintf("attachment; filename=\"%s\"", filename)
 	}
-	if fileSize > 1024*1024*10 {
+	if numThreads > 0 {
+		opts.NumThreads = numThreads
 		opts.ConcurrentStreamParts = true
-		opts.NumThreads = s.PutThreads
 	}
 	_, err := s.PutObject(context.Background(), s.Bucket, key, file, fileSize, opts)
 	return err
 }
 
-func (s *MinIOClient) Get(key string) (*minio.Object, error) {
+func (s *MinIOClient) Get(key string, partNumber int) (*minio.Object, error) {
 	key = strings.TrimLeft(key, "/")
-	return s.Client.GetObject(context.Background(), s.Bucket, key, minio.GetObjectOptions{})
+	return s.Client.GetObject(context.Background(), s.Bucket, key, minio.GetObjectOptions{PartNumber: partNumber})
 }
 
 func (s *MinIOClient) Remove(key string) error {
