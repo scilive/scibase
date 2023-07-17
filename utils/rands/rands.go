@@ -49,5 +49,9 @@ func UUIDLower(length ...int) string {
 // RandomPath  returns Jc/Sp/hmDoWw5BTISBCHhCzwXj
 func RandomPath() string {
 	p := UUID(4)
-	return fmt.Sprintf("%s/%s/%s", p[:2], p[2:], UUID(20))
+	return fmt.Sprintf("/%s/%s/%s", p[:2], p[2:], UUID(20))
+}
+func RandomDatePath() string {
+	now := time.Now()
+	return fmt.Sprintf("/%d/%02d%02d/%s", now.Year(), now.Month(), now.Day(), UUID(20))
 }

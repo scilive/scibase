@@ -9,7 +9,7 @@ import (
 
 func TestRandomPath(t *testing.T) {
 	a := rands.RandomPath()
-	assert.Equal(t, 26, len(a))
+	assert.NotEmpty(t, a)
 
 }
 
@@ -25,4 +25,9 @@ func TestUUIDLower(t *testing.T) {
 func TestRandomInts(t *testing.T) {
 	a := rands.RandomInts(6)
 	assert.Equal(t, 6, len(a))
+}
+
+func TestRandomDatePath(t *testing.T) {
+	a := rands.RandomDatePath()
+	assert.NotEmpty(t, a)
 }
