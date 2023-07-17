@@ -33,11 +33,15 @@ func NewMinIO(client *minio.Client, bucket string, provider S3Provider) *MinIOCl
 	}
 }
 
-func (s *MinIOClient) Put(key string, file io.Reader, fileSize int64, contentType string) error {
+func (s *MinIOClient) Put(key string, file io.Reader, fileSize int64, contentType, filename string) error {
 	key = strings.TrimLeft(key, "/")
-	_, err := s.PutObject(context.Background(), s.Bucket, key, file, fileSize, minio.PutObjectOptions{
+	opts := minio.PutObjectOptions{
 		ContentType: contentType,
-	})
+	}
+	if filename != "" {
+		opts.ContentDisposition = fmt.Sprintf("attachment; filename=\"%s\"", filename)
+	}
+	_, err := s.PutObject(context.Background(), s.Bucket, key, file, fileSize, opts)
 	return err
 }
 
