@@ -3,7 +3,6 @@ package rands
 import (
 	"fmt"
 	"math/rand"
-	"strings"
 	"time"
 )
 
@@ -12,6 +11,7 @@ func init() {
 }
 
 var letters = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+var lettersLower = []byte("abcdefghijklmnopqrstuvwxyz0123456789")
 var numbers = []byte("0123456789")
 
 func UUID(length ...int) string {
@@ -34,14 +34,20 @@ func RandomInts(length int) string {
 	return string(b)
 }
 
-// RandomPath  returns Jc/Sp/hmDoWw5BTISBCHhCzwXj.jpg
-func RandomPath(suffix string) string {
-	p := UUID(4)
-	i := strings.Index(suffix, ".")
-	if i == -1 {
-		i = 0
-	} else {
-		i += 1
+func UUIDLower(length ...int) string {
+	l := 32
+	if len(length) > 0 {
+		l = length[0]
 	}
-	return fmt.Sprintf("%s/%s/%s.%s", p[:2], p[2:], UUID(20), suffix[i:])
+	b := make([]byte, l)
+	for i := range b {
+		b[i] = lettersLower[rand.Intn(len(lettersLower))]
+	}
+	return string(b)
+}
+
+// RandomPath  returns Jc/Sp/hmDoWw5BTISBCHhCzwXj
+func RandomPath() string {
+	p := UUID(4)
+	return fmt.Sprintf("%s/%s/%s", p[:2], p[2:], UUID(20))
 }
