@@ -50,7 +50,7 @@ func NewApp(conf NewAppConfig) *iris.Application {
 	app := iris.New()
 
 	app.Validator = validator.New()
-	app.Use(recoverFilter)
+	app.Use(RecoverFilter)
 	app.Get(conf.API_V1+"/healthz", func(ctx *context.Context) { ctx.WriteString("OK") })
 
 	tmpl := iris.Django(conf.ViewDir, conf.ViewSuffix)
@@ -95,7 +95,7 @@ func NewApp(conf NewAppConfig) *iris.Application {
 
 }
 
-func recoverFilter(ctx iris.Context) {
+func RecoverFilter(ctx iris.Context) {
 	defer func() {
 		if err := recover(); err != nil {
 			stack := string(debug.Stack())
