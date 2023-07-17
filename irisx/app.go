@@ -14,7 +14,7 @@ import (
 
 type NewAppConfig struct {
 	IsDev             bool
-	API_V1            string
+	Prefix            string
 	ViewDir           string
 	ViewSuffix        string
 	StaticDir         []string
@@ -35,9 +35,6 @@ func NewApp(conf NewAppConfig) *iris.Application {
 	if conf.LocaleDefaultLang == "" {
 		conf.LocaleDefaultLang = "en-US"
 	}
-	if conf.API_V1 == "" {
-		conf.API_V1 = "/v1"
-	}
 
 	context.WriteJSON = func(ctx *context.Context, v interface{}, options *context.JSON) error {
 		bs, err := jsoniter.Marshal(v)
@@ -51,7 +48,7 @@ func NewApp(conf NewAppConfig) *iris.Application {
 
 	app.Validator = validator.New()
 	app.Use(RecoverFilter)
-	app.Get(conf.API_V1+"/healthz", func(ctx *context.Context) { ctx.WriteString("OK") })
+	app.Get(conf.Prefix+"/healthz", func(ctx *context.Context) { ctx.WriteString("OK") })
 
 	tmpl := iris.Django(conf.ViewDir, conf.ViewSuffix)
 	tmpl.Reload(conf.IsDev)
