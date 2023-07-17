@@ -35,6 +35,7 @@ require (
 	github.com/mailgun/raymond/v2 v2.0.48 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.23 // indirect
+	github.com/pierrec/lz4/v4 v4.1.15 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/schollz/closestmatch v2.1.0+incompatible // indirect
 	github.com/tdewolff/minify/v2 v2.12.4 // indirect
@@ -77,6 +78,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rs/xid v1.5.0 // indirect
 	github.com/rs/zerolog v1.29.1
+	github.com/segmentio/kafka-go v0.4.42
 	github.com/sirupsen/logrus v1.9.2 // indirect
 	github.com/speps/go-hashids v2.0.0+incompatible
 	github.com/stretchr/testify v1.8.4
