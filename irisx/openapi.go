@@ -20,9 +20,6 @@ type OpenAPIConfig struct {
 }
 
 func SetupOpenAPIControllers(app *iris.Application, config OpenAPIConfig) {
-	if config.Prefix == "" {
-		config.Prefix = "/v1"
-	}
 	if config.ViewDir == "" {
 		config.ViewDir = "views"
 	}
