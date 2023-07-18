@@ -2,6 +2,7 @@ package irisx
 
 import (
 	"fmt"
+	"os"
 	"runtime/debug"
 
 	"github.com/daqiancode/std"
@@ -10,6 +11,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/hero"
+	"github.com/kataras/iris/v12/middleware/accesslog"
 )
 
 type NewAppConfig struct {
@@ -45,6 +47,9 @@ func NewApp(conf NewAppConfig) *iris.Application {
 		return err
 	}
 	app := iris.New()
+
+	al := accesslog.New(os.Stdout)
+	app.UseRouter(al.Handler)
 
 	app.Validator = validator.New()
 	app.Use(RecoverFilter)
