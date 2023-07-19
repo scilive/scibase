@@ -12,6 +12,7 @@ import (
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/hero"
 	"github.com/kataras/iris/v12/middleware/accesslog"
+	"github.com/kataras/iris/v12/view"
 )
 
 type NewAppConfig struct {
@@ -24,7 +25,7 @@ type NewAppConfig struct {
 	LocaleDefaultLang string
 }
 
-func NewApp(conf NewAppConfig) *iris.Application {
+func NewApp(conf NewAppConfig) (*iris.Application, *view.DjangoEngine) {
 	if conf.ViewDir == "" {
 		conf.ViewDir = "./views"
 	}
@@ -49,6 +50,18 @@ func NewApp(conf NewAppConfig) *iris.Application {
 	app := iris.New()
 
 	al := accesslog.New(os.Stdout)
+	al.Async = true
+	al.IP = false
+	al.RequestBody = false
+	al.ResponseBody = false
+	al.BytesReceived = false
+	al.BytesSent = false
+	al.BytesReceivedBody = false
+	al.BytesSentBody = false
+	al.AddFields(func(ctx *context.Context, f *accesslog.Fields) {
+		ip := GetRealIP(ctx)
+		f.Set("IP", ip)
+	})
 	app.UseRouter(al.Handler)
 
 	app.Validator = validator.New()
@@ -93,7 +106,7 @@ func NewApp(conf NewAppConfig) *iris.Application {
 			return next(ctx, std.Result{Data: v})
 		}
 	})
-	return app
+	return app, tmpl
 
 }
 
