@@ -65,3 +65,17 @@ func TestFilter(t *testing.T) {
 	})
 	assert.Equal(t, r, []int{2, 3})
 }
+
+func TestIndex(t *testing.T) {
+	a := []int{1, 2, 3}
+	r := lists.Index(a, 2)
+	assert.Equal(t, r, 1)
+}
+
+func TestIndexBy(t *testing.T) {
+	a := []int{1, 2, 3}
+	r := lists.IndexBy(a, func(v int, i int) bool {
+		return v == 2
+	})
+	assert.Equal(t, r, 1)
+}

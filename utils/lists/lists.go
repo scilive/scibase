@@ -87,9 +87,18 @@ func Sort(arr any, less func(i, j int) []int) {
 	})
 }
 
-func Index[T any](arr []T, fn func(v T) bool) int {
+func Index[T comparable](arr []T, value T) int {
 	for i, v := range arr {
-		if fn(v) {
+		if v == value {
+			return i
+		}
+	}
+	return -1
+}
+
+func IndexBy[T any](arr []T, fn func(v T, i int) bool) int {
+	for i, v := range arr {
+		if fn(v, i) {
 			return i
 		}
 	}
