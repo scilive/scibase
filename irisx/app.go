@@ -2,6 +2,7 @@ package irisx
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"runtime/debug"
 
@@ -38,7 +39,7 @@ func NewApp(conf NewAppConfig) (*iris.Application, *view.DjangoEngine) {
 	if conf.LocaleDefaultLang == "" {
 		conf.LocaleDefaultLang = "en-US"
 	}
-
+	log.Println("set json to jsoniter")
 	context.WriteJSON = func(ctx *context.Context, v interface{}, options *context.JSON) error {
 		bs, err := jsoniter.Marshal(v)
 		if err != nil {
@@ -48,7 +49,7 @@ func NewApp(conf NewAppConfig) (*iris.Application, *view.DjangoEngine) {
 		return err
 	}
 	app := iris.New()
-
+	log.Println("set access log")
 	al := accesslog.New(os.Stdout)
 	al.Async = true
 	al.IP = false
@@ -63,9 +64,10 @@ func NewApp(conf NewAppConfig) (*iris.Application, *view.DjangoEngine) {
 		f.Set("IP", ip)
 	})
 	app.UseRouter(al.Handler)
-
 	app.Validator = validator.New()
 	app.Use(RecoverFilter)
+
+	log.Println("mount health check: " + conf.Prefix + "/healthz")
 	app.Get(conf.Prefix+"/healthz", func(ctx *context.Context) { ctx.WriteString("OK") })
 
 	tmpl := iris.Django(conf.ViewDir, conf.ViewSuffix)
