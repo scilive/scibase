@@ -14,7 +14,12 @@ func TestResize(t *testing.T) {
 	assert.Nil(t, err)
 	bytes, err := images.Resize(file, "test.jpg", 200, 200)
 	assert.Nil(t, err)
-	err = os.WriteFile(env.GetPath("utils/images/test_reszied.jpg"), bytes, 0644)
+	err = os.WriteFile(env.GetPath("utils/images/test_resized.jpg"), bytes, 0644)
+	assert.Nil(t, err)
+	file.Seek(0, 0)
+	bytes, err = images.Resize(file, "test.jpg", 200, 0)
+	assert.Nil(t, err)
+	err = os.WriteFile(env.GetPath("utils/images/test_resized_by_w.jpg"), bytes, 0644)
 	assert.Nil(t, err)
 }
 
