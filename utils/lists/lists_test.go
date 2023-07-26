@@ -79,3 +79,9 @@ func TestIndexBy(t *testing.T) {
 	})
 	assert.Equal(t, r, 1)
 }
+
+func TestContains(t *testing.T) {
+	a := []int{1, 2, 3}
+	r := lists.Contains(a, 2)
+	assert.Equal(t, r, true)
+}

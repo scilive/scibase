@@ -104,3 +104,7 @@ func IndexBy[T any](arr []T, fn func(v T, i int) bool) int {
 	}
 	return -1
 }
+
+func Contains[T comparable](arr []T, value T) bool {
+	return Index(arr, value) >= 0
+}
