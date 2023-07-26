@@ -9,8 +9,56 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-// Resize resize image and keep original ratio
+// Crop crop image
+func Crop(file io.Reader, fileName string, x, y, w, h int) ([]byte, error) {
+	format, err := imaging.FormatFromFilename(fileName)
+	if err != nil {
+		return nil, err
+	}
+	im, err := imaging.Decode(file)
+	if err != nil {
+		return nil, err
+	}
+	im = imaging.Crop(im, image.Rect(x, y, x+w, y+h))
+	buff := new(bytes.Buffer)
+	err = imaging.Encode(buff, im, format)
+	if nil != err {
+		return nil, err
+	}
+	return buff.Bytes(), nil
+}
+
+// Resize resize image
 func Resize(file io.Reader, fileName string, w, h int) ([]byte, error) {
+	format, err := imaging.FormatFromFilename(fileName)
+	if err != nil {
+		return nil, err
+	}
+	im, err := imaging.Decode(file)
+	if err != nil {
+		return nil, err
+	}
+	if w <= 0 || h <= 0 {
+		ow, oh := im.Bounds().Dx(), im.Bounds().Dy()
+		if w <= 0 { // resize by height
+			w = ow * h / oh
+		}
+		if h <= 0 { // resize by width
+			h = oh * w / ow
+		}
+	}
+
+	im = imaging.Resize(im, w, h, imaging.Lanczos)
+	buff := new(bytes.Buffer)
+	err = imaging.Encode(buff, im, format)
+	if nil != err {
+		return nil, err
+	}
+	return buff.Bytes(), nil
+}
+
+// Thumb resize image and keep original ratio
+func Thumbnail(file io.Reader, fileName string, w, h int) ([]byte, error) {
 	format, err := imaging.FormatFromFilename(fileName)
 	if err != nil {
 		return nil, err
@@ -52,23 +100,4 @@ func GetGoodResize(ow, oh, w, h int) (int, int, int, int) {
 		}
 	}
 	return nw, nh, x, y
-}
-
-// Crop crop image
-func Crop(file io.Reader, fileName string, x, y, w, h int) ([]byte, error) {
-	format, err := imaging.FormatFromFilename(fileName)
-	if err != nil {
-		return nil, err
-	}
-	im, err := imaging.Decode(file)
-	if err != nil {
-		return nil, err
-	}
-	im = imaging.Crop(im, image.Rect(x, y, x+w, y+h))
-	buff := new(bytes.Buffer)
-	err = imaging.Encode(buff, im, format)
-	if nil != err {
-		return nil, err
-	}
-	return buff.Bytes(), nil
 }
