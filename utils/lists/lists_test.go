@@ -85,3 +85,16 @@ func TestContains(t *testing.T) {
 	r := lists.Contains(a, 2)
 	assert.Equal(t, r, true)
 }
+
+func TestStrs2Int64s(t *testing.T) {
+	a := []string{"1", "2", "3"}
+	r, err := lists.Strs2Int64s(a)
+	assert.Nil(t, err)
+	assert.Equal(t, r, []int64{1, 2, 3})
+}
+
+func TestInt64s2Strs(t *testing.T) {
+	a := []int64{1, 2, 3}
+	r := lists.Int64s2Strs(a)
+	assert.Equal(t, r, []string{"1", "2", "3"})
+}

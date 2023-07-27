@@ -2,6 +2,8 @@ package lists
 
 import (
 	"sort"
+	"strconv"
+	"strings"
 
 	"golang.org/x/exp/constraints"
 )
@@ -107,4 +109,24 @@ func IndexBy[T any](arr []T, fn func(v T, i int) bool) int {
 
 func Contains[T comparable](arr []T, value T) bool {
 	return Index(arr, value) >= 0
+}
+
+func Int64s2Strs(arr []int64) []string {
+	r := make([]string, len(arr))
+	for i, v := range arr {
+		r[i] = strconv.FormatInt(v, 10)
+	}
+	return r
+}
+
+func Strs2Int64s(arr []string) ([]int64, error) {
+	r := make([]int64, len(arr))
+	var err error
+	for i, v := range arr {
+		r[i], err = strconv.ParseInt(strings.TrimSpace(v), 10, 64)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return r, nil
 }
