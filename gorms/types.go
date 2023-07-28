@@ -1,4 +1,4 @@
-package tables
+package gorms
 
 import (
 	"database/sql/driver"
