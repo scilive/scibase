@@ -4,10 +4,12 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"path/filepath"
 	"strings"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/scilive/scibase/logs"
+	"github.com/scilive/scibase/utils/rands"
 )
 
 type MinIOClient struct {
@@ -22,6 +24,16 @@ func NewMinIO(client *minio.Client, bucket string) *MinIOClient {
 	}
 }
 
+func (s *MinIOClient) Save(rootDir string, file io.Reader, fileSize int64, contentType, filename string, numThreads uint) (string, error) {
+	key := filepath.Join(strings.TrimLeft(rootDir, "/"), rands.RandomPath())
+	key += filepath.Ext(filename)
+	err := s.Put(key, file, fileSize, contentType, filename, numThreads)
+	if err != nil {
+		return "", err
+	}
+	return key, nil
+}
+
 func (s *MinIOClient) Put(key string, file io.Reader, fileSize int64, contentType, filename string, numThreads uint) error {
 	key = strings.TrimLeft(key, "/")
 	var opts minio.PutObjectOptions
@@ -31,7 +43,7 @@ func (s *MinIOClient) Put(key string, file io.Reader, fileSize int64, contentTyp
 	if filename != "" {
 		opts.ContentDisposition = fmt.Sprintf("attachment; filename=\"%s\"", filename)
 	}
-	if numThreads > 0 {
+	if numThreads > 1 {
 		opts.NumThreads = numThreads
 		opts.ConcurrentStreamParts = true
 	}

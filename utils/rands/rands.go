@@ -46,7 +46,7 @@ func UUIDLower(length ...int) string {
 	return string(b)
 }
 
-// RandomPath  returns Jc/Sp/hmDoWw5BTISBCHhCzwXj
+// RandomPath  returns /Jc/Sp/hmDoWw5BTISBCHhCzwXj
 func RandomPath() string {
 	p := UUID(4)
 	return fmt.Sprintf("/%s/%s/%s", p[:2], p[2:], UUID(20))
