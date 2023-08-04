@@ -11,7 +11,6 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"github.com/kataras/iris/v12/hero"
 	"github.com/kataras/iris/v12/middleware/accesslog"
 	"github.com/kataras/iris/v12/view"
 )
@@ -99,15 +98,15 @@ func NewApp(conf NewAppConfig) (*iris.Application, *view.DjangoEngine) {
 		}
 		ctx.JSON(std.WrapError(err, "").ToResult(ctx.Tr))
 	})
-	app.ConfigureContainer().UseResultHandler(func(next hero.ResultHandler) hero.ResultHandler {
-		return func(ctx iris.Context, v interface{}) error {
-			switch val := v.(type) {
-			case std.Result, *std.Result:
-				return next(ctx, val)
-			}
-			return next(ctx, std.Result{Data: v})
-		}
-	})
+	// app.ConfigureContainer().UseResultHandler(func(next hero.ResultHandler) hero.ResultHandler {
+	// 	return func(ctx iris.Context, v interface{}) error {
+	// 		switch val := v.(type) {
+	// 		case std.Result, *std.Result:
+	// 			return next(ctx, val)
+	// 		}
+	// 		return next(ctx, std.Result{Data: v})
+	// 	}
+	// })
 	return app, tmpl
 
 }
