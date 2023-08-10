@@ -1,4 +1,4 @@
-package languages
+package langs
 
 import "strings"
 
