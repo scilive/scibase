@@ -67,7 +67,7 @@ func NewApp(conf NewAppConfig) (*iris.Application, *view.DjangoEngine) {
 	app.Validator = validator.New()
 	app.Use(RecoverFilter)
 
-	logs.Log.Info().Msg("mount health check: http://localhost" + conf.Prefix + "/health")
+	logs.Log.Info().Msg("mount health check:" + conf.Prefix + "/health")
 	app.Get(conf.Prefix+"/health", func(ctx *context.Context) { ctx.WriteString("OK") })
 
 	tmpl := iris.Django(conf.ViewDir, conf.ViewSuffix)
