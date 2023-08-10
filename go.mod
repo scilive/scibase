@@ -54,7 +54,7 @@ require (
 require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/daqiancode/env v0.0.0-20230505064403-1f29cf035d5a
-	github.com/daqiancode/std v0.0.0-20230615122647-7af8070446c4
+	github.com/daqiancode/std v0.0.0-20230727094251-d9300bcea847
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect

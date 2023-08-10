@@ -25,6 +25,8 @@ github.com/daqiancode/env v0.0.0-20230505064403-1f29cf035d5a h1:8/itib61zk3W1fw9
 github.com/daqiancode/env v0.0.0-20230505064403-1f29cf035d5a/go.mod h1:kYlQk2Rgl+xANMsoUsErox9c03bNP7L+SLfuRivHOSU=
 github.com/daqiancode/std v0.0.0-20230615122647-7af8070446c4 h1:n8B2JQWuwlRt2e5fFJORl/crZWq4B8bseyxgwzPdCZg=
 github.com/daqiancode/std v0.0.0-20230615122647-7af8070446c4/go.mod h1:SQP9CcmSX9G1omm5eGb7xbaLJDIuQq1fkl28XYuiLqg=
+github.com/daqiancode/std v0.0.0-20230727094251-d9300bcea847 h1:346YgQa7zEEsnJ9QW5mWIISiVcuv4KBT/xYQnMaqAsE=
+github.com/daqiancode/std v0.0.0-20230727094251-d9300bcea847/go.mod h1:SQP9CcmSX9G1omm5eGb7xbaLJDIuQq1fkl28XYuiLqg=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

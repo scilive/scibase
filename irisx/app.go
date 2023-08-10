@@ -13,6 +13,7 @@ import (
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/middleware/accesslog"
 	"github.com/kataras/iris/v12/view"
+	"github.com/scilive/scibase/utils/strs"
 )
 
 type NewAppConfig struct {
@@ -66,8 +67,8 @@ func NewApp(conf NewAppConfig) (*iris.Application, *view.DjangoEngine) {
 	app.Validator = validator.New()
 	app.Use(RecoverFilter)
 
-	log.Println("mount health check: " + conf.Prefix + "/healthz")
-	app.Get(conf.Prefix+"/healthz", func(ctx *context.Context) { ctx.WriteString("OK") })
+	log.Println("mount health check: " + conf.Prefix + "/health")
+	app.Get(conf.Prefix+"/health", func(ctx *context.Context) { ctx.WriteString("OK") })
 
 	tmpl := iris.Django(conf.ViewDir, conf.ViewSuffix)
 	tmpl.Reload(conf.IsDev)
@@ -87,6 +88,7 @@ func NewApp(conf NewAppConfig) (*iris.Application, *view.DjangoEngine) {
 		if err == nil || ctx.IsStopped() {
 			return
 		}
+		err = transformValidationErrors(ctx, err)
 		if e, ok := err.(*std.Error); ok {
 			if e.HttpStatus == 0 {
 				ctx.StatusCode(500)
@@ -129,4 +131,25 @@ func RecoverFilter(ctx iris.Context) {
 	}()
 
 	ctx.Next()
+}
+
+var DefaultValidationErrorMessage = "Invalid request parameters"
+
+func transformValidationErrors(ctx iris.Context, err error) error {
+	if err != nil {
+
+		if es, ok := err.(validator.ValidationErrors); ok {
+			e := std.Err(ctx.Tr("error.invalid_param")).SetHttpStatus(iris.StatusBadRequest)
+			if e.Message == "" {
+				e.Message = DefaultValidationErrorMessage
+			}
+			for _, v := range es {
+				field := strs.Decapitalize(v.Field())
+				e.AddFieldError(field, "invalid value", "error."+v.ActualTag(), v.Param())
+			}
+			return e
+		}
+		return err
+	}
+	return nil
 }
