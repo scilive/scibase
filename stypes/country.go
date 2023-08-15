@@ -1,4 +1,4 @@
-package langs
+package stypes
 
 import "strings"
 
@@ -9,7 +9,7 @@ func (c Country) String() string {
 }
 
 const (
-	CN Country = "zh"
-	US Country = "en"
-	AE Country = "ar"
+	CN Country = "CN"
+	US Country = "EN"
+	AE Country = "AE"
 )
