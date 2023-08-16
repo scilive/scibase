@@ -2,7 +2,6 @@ package stypes
 
 import (
 	"encoding/json"
-	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -36,7 +35,6 @@ func (s S3Url) MarshalJSON() ([]byte, error) {
 	provider := env.Get("S3_PROVIDER")
 	bucketHost := env.Get("S3_BUCKET_HOST")
 	bucket := env.Get("S3_BUCKET")
-	fmt.Println("MarshalJSON")
 	return json.Marshal(S3KeyToURL(string(s), provider, bucketHost, bucket))
 }
 
