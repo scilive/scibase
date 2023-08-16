@@ -41,5 +41,11 @@ func (s S3Url) MarshalJSON() ([]byte, error) {
 }
 
 func (s *S3Url) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, s)
+	var r string
+	err := json.Unmarshal(data, &r)
+	if err != nil {
+		return err
+	}
+	*s = S3Url(r)
+	return nil
 }
