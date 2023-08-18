@@ -98,6 +98,7 @@ func NewApp(conf NewAppConfig) (*iris.Application, *view.DjangoEngine) {
 			ctx.JSON(e.ToResult(ctx.Tr))
 			return
 		}
+		ctx.StatusCode(500)
 		ctx.JSON(std.WrapError(err, "").ToResult(ctx.Tr))
 	})
 	// app.ConfigureContainer().UseResultHandler(func(next hero.ResultHandler) hero.ResultHandler {
