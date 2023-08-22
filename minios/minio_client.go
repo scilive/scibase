@@ -51,9 +51,9 @@ func (s *MinIOClient) Put(key string, file io.Reader, fileSize int64, contentTyp
 	return err
 }
 
-func (s *MinIOClient) Get(key string, partNumber int) (*minio.Object, error) {
+func (s *MinIOClient) Get(key string) (*minio.Object, error) {
 	key = strings.TrimLeft(key, "/")
-	return s.Client.GetObject(context.Background(), s.Bucket, key, minio.GetObjectOptions{PartNumber: partNumber})
+	return s.Client.GetObject(context.Background(), s.Bucket, key, minio.GetObjectOptions{})
 }
 
 func (s *MinIOClient) Remove(key string) error {
