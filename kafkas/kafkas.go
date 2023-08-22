@@ -27,11 +27,10 @@ func NewReader(config kafka.ReaderConfig) *KafkaReader {
 		Reader: kafka.NewReader(config),
 	}
 }
-func NewWriterEnv(topic string, autoCreateTopic bool) *kafka.Writer {
+func NewWriterEnv(autoCreateTopic bool) *kafka.Writer {
 	brokers := strings.Split(env.Get("KAFKA_BROKERS"), ",")
 	return &kafka.Writer{
 		Addr:                   kafka.TCP(brokers...),
-		Topic:                  topic,
 		AllowAutoTopicCreation: autoCreateTopic,
 	}
 }
