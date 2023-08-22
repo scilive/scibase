@@ -21,6 +21,7 @@ func (s *KafkaReaderHub) On(topic, groupId string, handler Handler) {
 	config.Topic = topic
 	config.GroupID = groupId
 	s.readers[topic] = NewReader(config)
+	s.readers[topic].Handler = handler
 }
 
 func (s *KafkaReaderHub) Run() {
