@@ -29,6 +29,9 @@ func (s *KafkaReader) Run() {
 	for {
 		m, err := s.Reader.ReadMessage(context.Background())
 		if err != nil {
+			if err == context.DeadlineExceeded {
+				continue
+			}
 			logs.Log.Error().Err(err).Msg("failed to read message")
 			continue
 		}
