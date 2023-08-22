@@ -30,12 +30,15 @@ func S3KeyToURL(key, provider, bucketHost, bucket string) string {
 	}
 	return bucketHost + filepath.Join("/", bucket, key)
 }
-
-func (s S3Url) MarshalJSON() ([]byte, error) {
+func (s S3Url) Url() string {
 	provider := env.Get("S3_PROVIDER")
 	bucketHost := env.Get("S3_BUCKET_HOST")
 	bucket := env.Get("S3_BUCKET")
-	return json.Marshal(S3KeyToURL(string(s), provider, bucketHost, bucket))
+	return S3KeyToURL(string(s), provider, bucketHost, bucket)
+}
+
+func (s S3Url) MarshalJSON() ([]byte, error) {
+	return json.Marshal(s.Url())
 }
 
 func (s *S3Url) UnmarshalJSON(data []byte) error {
