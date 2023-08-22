@@ -12,18 +12,19 @@ type KafkaReader struct {
 	Handler func(m kafka.Message) error
 }
 
-func NewReader(config kafka.ReaderConfig) *KafkaReader {
-	return &KafkaReader{
-		Reader: kafka.NewReader(config),
-	}
-}
-
+// Run `go reader.Run()` in a goroutine
 func (s *KafkaReader) Run() {
 	defer func() {
+		s.Reader.Close()
 		if err := recover(); err != nil {
-			logs.Log.Error().Err(err.(error)).Msg("panic in kafka reader")
+			if e, ok := err.(error); ok {
+				logs.Log.Error().Err(e).Msg("panic in kafka reader")
+			} else {
+				logs.Log.Error().Interface("error", e).Msg("panic in kafka reader")
+			}
 		}
 	}()
+
 	s.Reader.SetOffset(kafka.LastOffset)
 	for {
 		m, err := s.Reader.ReadMessage(context.Background())
@@ -39,6 +40,5 @@ func (s *KafkaReader) Run() {
 		} else {
 			logs.Log.Warn().Str("topic", m.Topic).Msg("no handler for topic")
 		}
-
 	}
 }
