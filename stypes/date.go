@@ -99,6 +99,35 @@ func (t *Time) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// MarshalText implements encoding.TextMarshaler.
+// It returns an empty string if invalid, otherwise time.Time's MarshalText.
+func (t Time) MarshalText() ([]byte, error) {
+	if !t.Valid {
+		return []byte{}, nil
+	}
+	return t.Time.MarshalText()
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+// It has backwards compatibility with v3 in that the string "null" is considered equivalent to an empty string
+// and unmarshaling will succeed. This may be removed in a future version.
+func (t *Time) UnmarshalText(text []byte) error {
+	str := string(text)
+	// allowing "null" is for backwards compatibility with v3
+	if str == "" || str == "null" {
+		t.Valid = false
+		return nil
+	}
+	d, err := ParseTime(string(text))
+	if err != nil {
+		return err
+	}
+	t.Valid = true
+	t.Time = d
+	return nil
+
+}
+
 type Date struct {
 	sql.NullTime
 }
@@ -124,7 +153,35 @@ func (t *Date) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	d, err := time.Parse(DateFormat, s)
+	d, err := ParseTime(s)
+	if err != nil {
+		return err
+	}
+	t.Valid = true
+	t.Time = d
+	return nil
+}
+
+// MarshalText implements encoding.TextMarshaler.
+// It returns an empty string if invalid, otherwise time.Time's MarshalText.
+func (t Date) MarshalText() ([]byte, error) {
+	if !t.Valid {
+		return []byte{}, nil
+	}
+	return t.Time.MarshalText()
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+// It has backwards compatibility with v3 in that the string "null" is considered equivalent to an empty string
+// and unmarshaling will succeed. This may be removed in a future version.
+func (t *Date) UnmarshalText(text []byte) error {
+	str := string(text)
+	// allowing "null" is for backwards compatibility with v3
+	if str == "" || str == "null" {
+		t.Valid = false
+		return nil
+	}
+	d, err := ParseTime(string(text))
 	if err != nil {
 		return err
 	}

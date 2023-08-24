@@ -31,6 +31,12 @@ func TestTime(t *testing.T) {
 		_, err = json.Marshal(r)
 		assert.Nil(t, err)
 	}
+	for _, c := range cases {
+		err := (&r).UnmarshalText([]byte(c))
+		assert.Nil(t, err)
+		_, err = r.MarshalText()
+		assert.Nil(t, err)
+	}
 }
 
 func TestDate(t *testing.T) {
@@ -41,4 +47,10 @@ func TestDate(t *testing.T) {
 	bs, err := json.Marshal(dt)
 	assert.Nil(t, err)
 	assert.Equal(t, str, string(bs))
+
+	str = "2023-08-24"
+	(&dt).UnmarshalText([]byte(str))
+	bs, err = json.Marshal(dt)
+	assert.Nil(t, err)
+	assert.Equal(t, "\""+str+"\"", string(bs))
 }
