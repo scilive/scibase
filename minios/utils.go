@@ -24,13 +24,13 @@ func Put(file io.Reader, category, fileName, contentType string, fileSize int64,
 	return fullPath, nil
 }
 
-func Get(key string, partNumber int) ([]byte, error) {
+func Get(key string) ([]byte, error) {
 	s3, err := drivers.NewMinIO()
 	if err != nil {
 		return nil, err
 	}
 	s3Client := &MinIOClient{Client: s3, Bucket: env.Get("S3_BUCKET")}
-	res, err := s3Client.Get(key, partNumber)
+	res, err := s3Client.Get(key)
 	if err != nil {
 		return nil, err
 	}
