@@ -90,23 +90,23 @@ func (s *Minios) Put(file io.Reader, category, ext, contentType string, fileSize
 	}
 	return fullPath, nil
 }
-func (s *Minios) Save(key string, file io.Reader, contentType, filename string, fileSize int64, threads uint) (string, error) {
+func (s *Minios) Save(key string, file io.Reader, contentType, filename string, fileSize int64, threads uint) error {
 	key = strings.TrimLeft(key, "/")
 	err := s.Client.Put(key, file, fileSize, contentType, filename, threads)
 	if err != nil {
-		return "", err
+		return err
 	}
-	return key, nil
+	return nil
 }
 
-func (s *Minios) SaveBytes(key string, bs []byte, contentType, filename string, threads uint) (string, error) {
+func (s *Minios) SaveBytes(key string, bs []byte, contentType, filename string, threads uint) error {
 	key = strings.TrimLeft(key, "/")
 	file := bytes.NewBuffer(bs)
 	err := s.Client.Put(key, file, int64(len(bs)), contentType, filename, threads)
 	if err != nil {
-		return "", err
+		return err
 	}
-	return key, nil
+	return nil
 }
 
 func (s *Minios) Puts(files []io.Reader, category, ext, contentType string, fileSizes []int64, threads uint) ([]string, error) {
@@ -156,10 +156,11 @@ func (s *Minios) PutImage(file io.Reader, category, fileName, contentType string
 		return r, err
 	}
 	//save raw
-	r.Raw, err = s.SaveBytes(raw_key, bs, contentType, fileName, 0)
+	err = s.SaveBytes(raw_key, bs, contentType, fileName, 0)
 	if err != nil {
 		return r, err
 	}
+	r.Raw = raw_key
 	//crop
 	if crop.H > 0 {
 		bs, err = images.Crop(bytes.NewBuffer(bs), fileName, crop.X, crop.Y, crop.W, crop.H)
@@ -167,10 +168,11 @@ func (s *Minios) PutImage(file io.Reader, category, fileName, contentType string
 			return r, err
 		}
 		croped_key := base_key + fmt.Sprintf("_%dx%d", crop.W, crop.H) + ext
-		r.Crop, err = s.SaveBytes(croped_key, bs, contentType, fileName, 0)
+		err = s.SaveBytes(croped_key, bs, contentType, fileName, 0)
 		if err != nil {
 			return r, err
 		}
+		r.Crop = croped_key
 	}
 	//resize
 	resizes_key := make([]string, len(resizes))
@@ -181,11 +183,11 @@ func (s *Minios) PutImage(file io.Reader, category, fileName, contentType string
 			return r, err
 		}
 		resized_key := base_key + fmt.Sprintf("_%dx%d", w, h) + ext
-		resized, err := s.SaveBytes(resized_key, bs, contentType, fileName, 0)
+		err := s.SaveBytes(resized_key, bs, contentType, fileName, 0)
 		if err != nil {
 			return r, err
 		}
-		resizes_key[i] = resized
+		resizes_key[i] = resized_key
 	}
 	r.Resizes = resizes_key
 	return r, nil
