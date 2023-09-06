@@ -12,5 +12,4 @@ func CreateRedis() *redis.Client {
 		Password: env.Get("REDIS_PASSWORD", ""), // no password set
 		DB:       env.GetIntMust("REDIS_DB", 0), // use default DB
 	})
-
 }
