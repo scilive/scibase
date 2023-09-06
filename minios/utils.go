@@ -3,6 +3,7 @@ package minios
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"path/filepath"
 	"strings"
@@ -11,6 +12,7 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/scilive/scibase/drivers"
 	"github.com/scilive/scibase/utils/images"
+	"github.com/scilive/scibase/utils/ios"
 	"github.com/scilive/scibase/utils/rands"
 )
 
@@ -53,6 +55,10 @@ func Get(key string) ([]byte, error) {
 	// return io.ReadAll(res)
 }
 
+func NewKey(rootDir, category string) string {
+	return filepath.Join(rootDir, category, rands.RandomDatePath())
+}
+
 type Minios struct {
 	Client *MinIOClient
 	// Bucket  string
@@ -84,6 +90,25 @@ func (s *Minios) Put(file io.Reader, category, ext, contentType string, fileSize
 	}
 	return fullPath, nil
 }
+func (s *Minios) Save(key string, file io.Reader, contentType, filename string, fileSize int64, threads uint) (string, error) {
+	key = strings.TrimLeft(key, "/")
+	err := s.Client.Put(key, file, fileSize, contentType, filename, threads)
+	if err != nil {
+		return "", err
+	}
+	return key, nil
+}
+
+func (s *Minios) SaveBytes(key string, bs []byte, contentType, filename string, threads uint) (string, error) {
+	key = strings.TrimLeft(key, "/")
+	file := bytes.NewBuffer(bs)
+	err := s.Client.Put(key, file, int64(len(bs)), contentType, filename, threads)
+	if err != nil {
+		return "", err
+	}
+	return key, nil
+}
+
 func (s *Minios) Puts(files []io.Reader, category, ext, contentType string, fileSizes []int64, threads uint) ([]string, error) {
 	var paths []string
 	for i, file := range files {
@@ -121,29 +146,47 @@ type PutImageResult struct {
 }
 
 func (s *Minios) PutImage(file io.Reader, category, fileName, contentType string, fileSize int64, crop Rect, resizes [][]int) (PutImageResult, error) {
-	input := file
 	var r PutImageResult
 	var err error
-	r.Raw, err = s.Put(input, category, fileName, contentType, fileSize, 0)
+	base_key := NewKey(s.RootDir, category)
+	ext := filepath.Ext(fileName)
+	raw_key := base_key + ext
+	bs, err := ios.ReaderToBytes(file)
+	if err != nil {
+		return r, err
+	}
+	//save raw
+	r.Raw, err = s.SaveBytes(raw_key, bs, contentType, fileName, 0)
 	if err != nil {
 		return r, err
 	}
 	//crop
 	if crop.H > 0 {
-		bs, err := images.Crop(input, fileName, crop.X, crop.Y, crop.W, crop.H)
+		bs, err = images.Crop(bytes.NewBuffer(bs), fileName, crop.X, crop.Y, crop.W, crop.H)
 		if err != nil {
 			return r, err
 		}
-		input = bytes.NewBuffer(bs)
+		croped_key := base_key + fmt.Sprintf("_%dx%d", crop.W, crop.H) + ext
+		r.Crop, err = s.SaveBytes(croped_key, bs, contentType, fileName, 0)
+		if err != nil {
+			return r, err
+		}
 	}
 	//resize
-	for _, v := range resizes {
+	resizes_key := make([]string, len(resizes))
+	for i, v := range resizes {
 		w, h := v[0], v[1]
-		bs, err := images.Resize(input, fileName, w, h)
+		bs, err = images.Resize(bytes.NewBuffer(bs), fileName, w, h)
 		if err != nil {
 			return r, err
 		}
-		input = bytes.NewBuffer(bs)
+		resized_key := base_key + fmt.Sprintf("_%dx%d", w, h) + ext
+		resized, err := s.SaveBytes(resized_key, bs, contentType, fileName, 0)
+		if err != nil {
+			return r, err
+		}
+		resizes_key[i] = resized
 	}
+	r.Resizes = resizes_key
 	return r, nil
 }
