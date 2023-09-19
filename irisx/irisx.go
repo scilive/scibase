@@ -24,6 +24,10 @@ func GetRealIP(ctx iris.Context) string {
 }
 
 func GetUid(ctx iris.Context) (int64, error) {
+	u := ctx.User()
+	if u == nil {
+		return 0, errors.New("invalid access_token")
+	}
 	id, err := ctx.User().GetID()
 	if err != nil {
 		return 0, err
