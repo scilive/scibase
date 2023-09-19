@@ -33,3 +33,19 @@ func GetUid(ctx iris.Context) (int64, error) {
 	}
 	return strconv.ParseInt(id, 10, 64)
 }
+
+func UidInt(ctx iris.Context) int64 {
+	id, err := GetUid(ctx)
+	if err != nil {
+		return 0
+	}
+	return id
+}
+
+func UidStr(ctx iris.Context) string {
+	id, err := ctx.User().GetID()
+	if err != nil {
+		return ""
+	}
+	return id
+}
