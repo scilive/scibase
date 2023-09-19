@@ -91,7 +91,7 @@ func NewApp(conf NewAppConfig) (*iris.Application, *view.DjangoEngine) {
 		err = transformValidationErrors(ctx, err)
 		if e, ok := err.(*std.Error); ok {
 			if e.HttpStatus == 0 {
-				logs.Log.Error().Err(e).Int("httpStatus", 500).Send()
+				logs.Log.Error().Stack().Err(e).Int("httpStatus", 500).Send()
 				ctx.StatusCode(500)
 			} else {
 				ctx.StatusCode(e.HttpStatus)
@@ -99,7 +99,7 @@ func NewApp(conf NewAppConfig) (*iris.Application, *view.DjangoEngine) {
 			ctx.JSON(e.ToResult(ctx.Tr))
 			return
 		}
-		logs.Log.Error().Err(err).Int("httpStatus", 500).Send()
+		logs.Log.Error().Stack().Err(err).Int("httpStatus", 500).Send()
 		ctx.StatusCode(500)
 		ctx.JSON(std.WrapError(err, "").ToResult(ctx.Tr))
 	})
